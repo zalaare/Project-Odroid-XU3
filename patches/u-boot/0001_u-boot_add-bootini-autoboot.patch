@@ -1,0 +1,20 @@
+diff -Nur a/include/configs/odroid.h b/include/configs/odroid.h
+--- a/include/configs/odroid.h	2015-10-19 19:59:38.000000000 -0400
++++ b/include/configs/odroid.h	2015-11-03 16:17:44.388149442 -0500
+@@ -131,6 +131,7 @@
+ 	"kernel_args=" \
+ 		"setenv bootargs root=/dev/mmcblk${mmcrootdev}p${mmcrootpart}" \
+ 		" rootwait ${console} ${opts}\0" \
++	"boot_ini=bootini\0" \
+ 	"boot_script=" \
+ 		"run loadbootscript;" \
+ 		"source ${scriptaddr}\0" \
+@@ -159,6 +160,8 @@
+ 	"autoboot=" \
+ 		"if test -e mmc 0 boot.scr; then; " \
+ 			"run boot_script; " \
++		"elif test -e mmc 0 boot.ini; then; " \
++			"run boot_ini;" \
+ 		"elif test -e mmc 0 Image.itb; then; " \
+ 			"run boot_fit;" \
+ 		"elif test -e mmc 0 zImage; then; " \

@@ -1,0 +1,1 @@
+../../../../packages/mediacenter/kodi/debug.d

@@ -1,0 +1,7 @@
+# Drop in Project Specific U-Boot Custom Fusing script | ODROID_XU3
+#  This script is run inside the scripts/mkimage script when the Device we are fusing is different than the defaults
+echo "image: fusing for odroid_xu3..."
+dd if="$RELEASE_DIR/3rdparty/bootloader/bl1" of="$DISK" conv=fsync,notrunc bs=512 seek=1 >"$SAVE_ERROR" 2>&1 || show_error
+dd if="$RELEASE_DIR/3rdparty/bootloader/bl2" of="$DISK" conv=fsync,notrunc bs=512 seek=31 >"$SAVE_ERROR" 2>&1 || show_error
+dd if="$RELEASE_DIR/3rdparty/bootloader/u-boot" of="$DISK" conv=fsync,notrunc bs=512 seek=63 >"$SAVE_ERROR" 2>&1 || show_error
+dd if="$RELEASE_DIR/3rdparty/bootloader/tzsw" of="$DISK" conv=fsync,notrunc bs=512 seek=2111 >"$SAVE_ERROR" 2>&1 || show_error

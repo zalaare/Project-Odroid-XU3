@@ -1,0 +1,2 @@
+KERNEL=="mali", MODE="0777", GROUP="video"
+KERNEL=="ump", MODE="0777", GROUP="video"
