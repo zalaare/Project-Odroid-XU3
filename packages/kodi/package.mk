@@ -16,13 +16,20 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+case $DISTRO in
+  LibreELEC) PKG_VERSION="16.1-c327c53"
+    PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz" ;;
+  OpenELEC)  PKG_VERSION="c1c4b9e"
+    PKG_GIT_URL="https://github.com/xbmc/xbmc.git"
+    PKG_GIT_BRANCH="Jarvis"
+    PKG_KEEP_CHECKOUT="no" ;;
+esac
+
 PKG_NAME="kodi"
-PKG_VERSION="16.1-rc2-a7caa16"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kodi.tv"
-PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain kodi:host libsquish boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis ffmpeg crossguid giflib"
 PKG_DEPENDS_HOST="lzo:host libpng:host libjpeg-turbo:host giflib:host"
 PKG_PRIORITY="optional"
@@ -377,12 +384,22 @@ post_makeinstall_target() {
   rm -rf $INSTALL/usr/share/xsessions
 
   mkdir -p $INSTALL/usr/share/kodi/addons
-    cp -R $PKG_DIR/config/os.openelec.tv $INSTALL/usr/share/kodi/addons
-    $SED "s|@OS_VERSION@|$OS_VERSION|g" -i $INSTALL/usr/share/kodi/addons/os.openelec.tv/addon.xml
-    cp -R $PKG_DIR/config/os.libreelec.tv $INSTALL/usr/share/kodi/addons
-    $SED "s|@OS_VERSION@|$OS_VERSION|g" -i $INSTALL/usr/share/kodi/addons/os.libreelec.tv/addon.xml
-    cp -R $PKG_DIR/config/repository.libreelec.tv $INSTALL/usr/share/kodi/addons
-    $SED "s|@ADDON_URL@|$ADDON_URL|g" -i $INSTALL/usr/share/kodi/addons/repository.libreelec.tv/addon.xml
+    if [ -d $PKG_DIR/config/os.openelec.tv ]; then
+      cp -R $PKG_DIR/config/os.openelec.tv $INSTALL/usr/share/kodi/addons
+      $SED "s|@OS_VERSION@|$OS_VERSION|g" -i $INSTALL/usr/share/kodi/addons/os.openelec.tv/addon.xml
+    fi
+    if [ -d $PKG_DIR/config/repository.openelec.tv ]; then
+      cp -R $PKG_DIR/config/repository.openelec.tv $INSTALL/usr/share/kodi/addons
+      $SED "s|@ADDON_URL@|$ADDON_URL|g" -i $INSTALL/usr/share/kodi/addons/repository.openelec.tv/addon.xml
+    fi
+    if [ -d $PKG_DIR/config/os.libreelec.tv ]; then
+      cp -R $PKG_DIR/config/os.libreelec.tv $INSTALL/usr/share/kodi/addons
+      $SED "s|@OS_VERSION@|$OS_VERSION|g" -i $INSTALL/usr/share/kodi/addons/os.libreelec.tv/addon.xml
+    fi
+    if [ -d $PKG_DIR/config/repository.libreelec.tv ]; then
+      cp -R $PKG_DIR/config/repository.libreelec.tv $INSTALL/usr/share/kodi/addons
+      $SED "s|@ADDON_URL@|$ADDON_URL|g" -i $INSTALL/usr/share/kodi/addons/repository.libreelec.tv/addon.xml
+    fi
 
   mkdir -p $INSTALL/usr/lib/python"$PYTHON_VERSION"/site-packages/kodi
     cp -R tools/EventClients/lib/python/* $INSTALL/usr/lib/python"$PYTHON_VERSION"/site-packages/kodi
@@ -419,7 +436,9 @@ post_makeinstall_target() {
       cp $PKG_DIR/fonts/*.ttf $INSTALL/usr/share/kodi/media/Fonts
   fi
 
-  debug_strip $INSTALL/usr/lib/kodi/kodi.bin
+  if [ "$DISTRO" = LibreELEC ]; then
+    debug_strip $INSTALL/usr/lib/kodi/kodi.bin
+  fi
 }
 
 post_install() {
