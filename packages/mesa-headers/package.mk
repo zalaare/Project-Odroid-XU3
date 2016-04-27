@@ -29,6 +29,7 @@ PKG_SECTION="devel"
 PKG_SHORTDESC="Mesa headers for Mali"
 PKG_LONGDESC="Mesa headers for Mali"
 PKG_SOURCE_DIR="mesa-$PKG_VERSION"
+PKG_SOURCE_NAME="mesa-$PKG_VERSION.tar.xz"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"

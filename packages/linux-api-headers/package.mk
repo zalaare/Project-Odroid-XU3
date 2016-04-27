@@ -29,6 +29,7 @@ PKG_SECTION="linux"
 PKG_SHORTDESC="linux-api-headers: Linux kernel headers sanitized for development use"
 PKG_LONGDESC="linux-api-headers: Linux kernel headers sanitized for development use"
 PKG_SOURCE_DIR="linux-$PKG_VERSION"
+PKG_SOURCE_NAME="$PKG_NAME-$PKG_VERSION.tar.xz"
 
 pre_make_host() {
   make ARCH=$TARGET_KERNEL_ARCH mrproper
