@@ -43,7 +43,7 @@ if [ "$INITRAMFS_PARTED_SUPPORT" = yes ]; then
 fi
 
 post_install() {
-  sed -i "s|tty1|ttySAC2|g" $HOME/$BUILD/initramfs/init
+  sed -i "s|tty1|ttySAC2|g" $ROOT/$BUILD/initramfs/init
   chmod 0755 $ROOT/$BUILD/initramfs/init
 
   cd $ROOT/$BUILD/initramfs
