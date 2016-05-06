@@ -17,9 +17,9 @@
 ################################################################################
 
 case $DISTRO in
-  LibreELEC) PKG_VERSION="16.1-c327c53"
+  LibreELEC) PKG_VERSION="$(grep ^PKG_VERSION $ROOT/packages/mediacenter/kodi/package.mk | awk -F '=' '{print $2}' | sed 's/["]//g' )"
     PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz" ;;
-  OpenELEC)  PKG_VERSION="c1c4b9e"
+  OpenELEC)  PKG_VERSION="$(grep ^PKG_VERSION $ROOT/packages/mediacenter/kodi/package.mk | awk -F '=' '{print $2}' | sed 's/["]//g' )"
     PKG_GIT_URL="https://github.com/xbmc/xbmc.git"
     PKG_GIT_BRANCH="Jarvis"
     PKG_KEEP_CHECKOUT="no" ;;
