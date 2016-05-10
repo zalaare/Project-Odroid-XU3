@@ -47,6 +47,9 @@
   # Target Configfile for u-boot
     UBOOT_CONFIGFILE="boot.ini"
 
+  # Kernel name
+    KERNEL_NAME="KERNEL"
+
   # Kernel target
     KERNEL_TARGET="zImage"
 
@@ -148,9 +151,6 @@
     EXTRA_DEPS="mkimage"
     EXTRA_DEPS_PKG="u-boot-tools"
 
-  # kernel image name
-    KERNEL_NAME="kernel.img"
-
   # Distribution Specific source location : Additional
     ODROID_MIRROR="http://freeweb.mine.nu/zalaare"
 
@@ -163,4 +163,3 @@
 
   # Default system partition offset, in sectors, eg. 2048
     SYSTEM_PART_START=3072
-
