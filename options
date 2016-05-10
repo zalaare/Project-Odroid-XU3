@@ -47,6 +47,9 @@
   # Target Configfile for u-boot
     UBOOT_CONFIGFILE="boot.ini"
 
+  # Kernel name
+    KERNEL_NAME="KERNEL"
+
   # Kernel target
     KERNEL_TARGET="zImage"
 
