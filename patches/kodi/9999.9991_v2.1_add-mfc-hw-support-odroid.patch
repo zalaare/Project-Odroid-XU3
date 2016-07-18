@@ -1,16 +1,16 @@
 diff -Nur a/configure.ac b/configure.ac
---- a/configure.ac	2015-07-13 03:19:22.000000000 -0400
-+++ b/configure.ac	2015-08-18 09:20:24.526892852 -0400
-@@ -553,7 +553,7 @@
+--- a/configure.ac	2016-07-01 06:13:30.000000000 +0000
++++ b/configure.ac	2016-07-18 16:03:26.601924825 +0000
+@@ -474,7 +474,7 @@
  
  AC_ARG_ENABLE([codec],
    [AS_HELP_STRING([--enable-codec],
--  [enable additional codecs from a list of comma separated names, (default is none, choices are amcodec, libstagefright and imxvpu)])],
-+  [enable additional codecs from a list of comma separated names, (default is none, choices are mfc, amcodec, libstagefright and imxvpu)])],
+-  [enable additional codecs from a list of comma separated names, (default is none, choices are amcodec and imxvpu)])],
++  [enable additional codecs from a list of comma separated names, (default is none, choices are amcodec, imxvpu and mfc)])],
    [add_codecs=$enableval],
    [add_codecs=no])
  
-@@ -1932,6 +1932,9 @@
+@@ -1701,6 +1701,9 @@
  # remember to convert commas to spaces
  for codecs in `echo $add_codecs | sed 's/,/ /g'`; do
    case $codecs in
@@ -18,14 +18,14 @@ diff -Nur a/configure.ac b/configure.ac
 +        XB_ADD_CODEC([MFC], [mfc], [$codecs])
 +        ;;
      *amcodec*)
-         AC_CHECK_HEADER([amcodec/codec_error.h],, AC_MSG_ERROR($missing_headers))
-         XB_ADD_CODEC([LIBAMCODEC], [amcodec], [$codecs])
-diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/DVDFactoryCodec.cpp b/xbmc/cores/dvdplayer/DVDCodecs/DVDFactoryCodec.cpp
---- a/xbmc/cores/dvdplayer/DVDCodecs/DVDFactoryCodec.cpp	2015-07-13 03:19:19.000000000 -0400
-+++ b/xbmc/cores/dvdplayer/DVDCodecs/DVDFactoryCodec.cpp	2015-08-17 17:04:17.627489713 -0400
-@@ -50,6 +50,9 @@
+       AC_CHECK_HEADER([amcodec/codec_error.h],, AC_MSG_ERROR($missing_headers))
+       XB_ADD_CODEC([LIBAMCODEC], [amcodec], [$codecs])
+diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp	2016-07-01 06:13:27.000000000 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp	2016-07-19 19:19:39.340644430 +0000
+@@ -41,6 +41,9 @@
  #include "Video/DVDVideoCodecAndroidMediaCodec.h"
- #include "android/activity/AndroidFeatures.h"
+ #include "platform/android/activity/AndroidFeatures.h"
  #endif
 +#if defined(HAS_MFC)
 +#include "Video/DVDVideoCodecMFC.h"
@@ -33,35 +33,33 @@ diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/DVDFactoryCodec.cpp b/xbmc/cores/dvdp
  #include "Audio/DVDAudioCodecFFmpeg.h"
  #include "Audio/DVDAudioCodecPassthrough.h"
  #include "Overlay/DVDOverlayCodecSSA.h"
-@@ -199,6 +202,11 @@
- #else
-   hwSupport += "MMAL:no ";
+@@ -147,6 +150,8 @@
+     pCodec = OpenCodec(new CDVDVideoCodecAndroidMediaCodec(processInfo), hint, options);
+ #elif defined(HAVE_LIBOPENMAX)
+     pCodec = OpenCodec(new CDVDVideoCodecOpenMax(processInfo), hint, options);
++#elif defined(HAS_MFC)
++    pCodec = OpenCodec(new CDVDVideoCodecMFC(processInfo), hint, options);
+ #elif defined(HAS_MMAL)
+     pCodec = OpenCodec(new CMMALVideo(processInfo), hint, options);
  #endif
-+#if defined(HAS_MFC) && defined(_LINUX)
-+  hwSupport += "MFC:yes ";
-+#elif defined(_LINUX)
-+  hwSupport += "MFC:no ";
-+#endif
-   CLog::Log(LOGDEBUG, "CDVDFactoryCodec: compiled in hardware support: %s", hwSupport.c_str());
+diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt b/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt	2016-07-01 06:13:27.000000000 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt	2016-07-18 16:29:19.874721891 +0000
+@@ -53,6 +53,11 @@
+   list(APPEND HEADERS MMALFFmpeg.h)
+ endif()
  
-   if (hint.stills && (hint.codec == AV_CODEC_ID_MPEG2VIDEO || hint.codec == AV_CODEC_ID_MPEG1VIDEO))
-@@ -322,6 +330,13 @@
-     }
- #endif
- 
-+#if defined(HAS_MFC)
-+    if ( !hint.software )
-+    {
-+      if ( hint.codec == AV_CODEC_ID_H263 || hint.codec == AV_CODEC_ID_H264 || hint.codec == AV_CODEC_ID_MPEG4 || hint.codec == AV_CODEC_ID_MPEG2VIDEO || AV_CODEC_ID_MPEG1VIDEO || hint.codec == AV_CODEC_ID_VC1 )
-+        if( (pCodec = OpenCodec(new CDVDVideoCodecMFC(), hint, options)) ) return pCodec;
-+    }
-+#endif
- 
-   // try to decide if we want to try halfres decoding
- #if !defined(TARGET_POSIX) && !defined(TARGET_WINDOWS)
-diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp
---- a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp	1969-12-31 19:00:00.000000000 -0500
-+++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp	2015-08-17 17:18:36.556457409 -0400
++if(MFC_FOUND)
++  list(APPEND SOURCES DVDVideoCodecMFC.cpp)
++  list(APPEND HEADERS DVDVideoCodecMFC.h)
++endif()
++
+ if(IMX_FOUND)
+   list(APPEND SOURCES DVDVideoCodecIMX.cpp)
+   list(APPEND HEADERS DVDVideoCodecIMX.h)
+diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp	1970-01-01 00:00:00.000000000 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp	2016-07-18 16:20:21.553847829 +0000
 @@ -0,0 +1,585 @@
 +#include "system.h"
 +
@@ -97,7 +95,7 @@ diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp b/xbmc/cor
 +#endif
 +#define CLASSNAME "CDVDVideoCodecMFC"
 +
-+CDVDVideoCodecMFC::CDVDVideoCodecMFC() : CDVDVideoCodec() {
++CDVDVideoCodecMFC::CDVDVideoCodecMFC(CProcessInfo &processInfo) : CDVDVideoCodec(processInfo) {
 +
 +  m_iDecoderHandle = NULL;
 +  m_iConverterHandle = NULL;
@@ -648,9 +646,9 @@ diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp b/xbmc/cor
 +  return CDVDVideoCodec::ClearPicture(pDvdVideoPicture);
 +
 +}
-diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.h b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.h
---- a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.h	1969-12-31 19:00:00.000000000 -0500
-+++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.h	2015-08-17 17:18:40.536406345 -0400
+diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h	1970-01-01 00:00:00.000000000 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h	2016-07-18 16:20:24.213753326 +0000
 @@ -0,0 +1,64 @@
 +#pragma once
 +
@@ -678,7 +676,7 @@ diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.h b/xbmc/cores
 +class CDVDVideoCodecMFC : public CDVDVideoCodec
 +{
 +public:
-+  CDVDVideoCodecMFC();
++  CDVDVideoCodecMFC(CProcessInfo &processInfo);
 +  virtual ~CDVDVideoCodecMFC();
 +  virtual bool Open(CDVDStreamInfo &hints, CDVDCodecOptions &options);
 +  virtual void Dispose();
@@ -716,23 +714,41 @@ diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/Video/DVDVideoCodecMFC.h b/xbmc/cores
 +
 +  bool OpenDevices();
 +};
-diff -Nur a/xbmc/cores/dvdplayer/DVDCodecs/Video/Makefile.in b/xbmc/cores/dvdplayer/DVDCodecs/Video/Makefile.in
---- a/xbmc/cores/dvdplayer/DVDCodecs/Video/Makefile.in	2015-07-13 03:19:19.000000000 -0400
-+++ b/xbmc/cores/dvdplayer/DVDCodecs/Video/Makefile.in	2015-08-17 17:05:50.842290577 -0400
-@@ -41,6 +41,10 @@
- SRCS += MMALCodec.cpp
+diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in b/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in	2016-07-01 06:13:27.000000000 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in	2016-07-19 19:19:56.972015876 +0000
+@@ -25,6 +25,9 @@
+ SRCS += AMLCodec.cpp
+ SRCS += DVDVideoCodecAmlogic.cpp
  endif
- 
 +ifeq (@USE_MFC@,1)
 +SRCS += DVDVideoCodecMFC.cpp
 +endif
-+
- LIB=Video.a
  
- include @abs_top_srcdir@/Makefile.include
+ ifeq (@USE_ANDROID@,1)
+ SRCS += DVDVideoCodecAndroidMediaCodec.cpp
+diff -Nur a/xbmc/linux/CMakeLists.txt b/xbmc/linux/CMakeLists.txt
+--- a/xbmc/linux/CMakeLists.txt	2016-07-01 06:13:28.000000000 +0000
++++ b/xbmc/linux/CMakeLists.txt	2016-07-18 16:23:19.063541107 +0000
+@@ -5,6 +5,7 @@
+             FDEventMonitor.cpp
+             LinuxResourceCounter.cpp
+             LinuxTimezone.cpp
++            LinuxV412Sink.cpp
+             PosixMountProvider.cpp
+             RBP.cpp
+             XFileUtils.cpp
+@@ -20,6 +21,7 @@
+             FDEventMonitor.h
+             LinuxResourceCounter.h
+             LinuxTimezone.h
++            LinuxV412Sink.h
+             PlatformDefs.h
+             PlatformInclude.h
+             PosixMountProvider.h
 diff -Nur a/xbmc/linux/LinuxV4l2Sink.cpp b/xbmc/linux/LinuxV4l2Sink.cpp
---- a/xbmc/linux/LinuxV4l2Sink.cpp	1969-12-31 19:00:00.000000000 -0500
-+++ b/xbmc/linux/LinuxV4l2Sink.cpp	2015-08-17 17:16:19.494216149 -0400
+--- a/xbmc/linux/LinuxV4l2Sink.cpp	1970-01-01 00:00:00.000000000 +0000
++++ b/xbmc/linux/LinuxV4l2Sink.cpp	2016-07-18 16:21:25.051591825 +0000
 @@ -0,0 +1,311 @@
 +#include "system.h"
 +
@@ -1046,8 +1062,8 @@ diff -Nur a/xbmc/linux/LinuxV4l2Sink.cpp b/xbmc/linux/LinuxV4l2Sink.cpp
 +  return true;
 +}
 diff -Nur a/xbmc/linux/LinuxV4l2Sink.h b/xbmc/linux/LinuxV4l2Sink.h
---- a/xbmc/linux/LinuxV4l2Sink.h	1969-12-31 19:00:00.000000000 -0500
-+++ b/xbmc/linux/LinuxV4l2Sink.h	2015-08-17 17:16:24.706149264 -0400
+--- a/xbmc/linux/LinuxV4l2Sink.h	1970-01-01 00:00:00.000000000 +0000
++++ b/xbmc/linux/LinuxV4l2Sink.h	2016-07-18 16:21:27.911490215 +0000
 @@ -0,0 +1,71 @@
 +#pragma once
 +
@@ -1121,13 +1137,13 @@ diff -Nur a/xbmc/linux/LinuxV4l2Sink.h b/xbmc/linux/LinuxV4l2Sink.h
 +  bool DequeueBuffer(v4l2_buffer *buffer);
 +};
 diff -Nur a/xbmc/linux/Makefile.in b/xbmc/linux/Makefile.in
---- a/xbmc/linux/Makefile.in	2015-07-13 03:19:13.000000000 -0400
-+++ b/xbmc/linux/Makefile.in	2015-08-17 17:06:39.105669973 -0400
-@@ -12,6 +12,7 @@
- SRCS += XHandle.cpp
- SRCS += XMemUtils.cpp
- SRCS += XTimeUtils.cpp
+--- a/xbmc/linux/Makefile.in	2016-07-01 06:13:28.000000000 +0000
++++ b/xbmc/linux/Makefile.in	2016-07-19 19:18:11.855763249 +0000
+@@ -7,6 +7,7 @@
+ SRCS += FDEventMonitor.cpp
+ SRCS += LinuxResourceCounter.cpp
+ SRCS += LinuxTimezone.cpp
 +SRCS += LinuxV4l2Sink.cpp
- 
- SRCS += RBP.cpp
- 
+ SRCS += PosixMountProvider.cpp
+ SRCS += XFileUtils.cpp
+ SRCS += XHandle.cpp
