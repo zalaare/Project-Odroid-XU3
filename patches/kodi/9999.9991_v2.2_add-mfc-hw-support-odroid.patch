@@ -1,7 +1,7 @@
 diff -Nur a/configure.ac b/configure.ac
---- a/configure.ac	2016-07-01 06:13:30.000000000 +0000
-+++ b/configure.ac	2016-07-18 16:03:26.601924825 +0000
-@@ -474,7 +474,7 @@
+--- a/configure.ac	2016-09-17 15:35:23.000000000 +0000
++++ b/configure.ac	2016-10-04 19:02:52.307885029 +0000
+@@ -475,7 +475,7 @@
  
  AC_ARG_ENABLE([codec],
    [AS_HELP_STRING([--enable-codec],
@@ -10,7 +10,7 @@ diff -Nur a/configure.ac b/configure.ac
    [add_codecs=$enableval],
    [add_codecs=no])
  
-@@ -1701,6 +1701,9 @@
+@@ -1724,6 +1724,9 @@
  # remember to convert commas to spaces
  for codecs in `echo $add_codecs | sed 's/,/ /g'`; do
    case $codecs in
@@ -21,8 +21,8 @@ diff -Nur a/configure.ac b/configure.ac
        AC_CHECK_HEADER([amcodec/codec_error.h],, AC_MSG_ERROR($missing_headers))
        XB_ADD_CODEC([LIBAMCODEC], [amcodec], [$codecs])
 diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp
---- a/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp	2016-07-01 06:13:27.000000000 +0000
-+++ b/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp	2016-07-19 19:19:39.340644430 +0000
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp	2016-09-17 15:35:20.000000000 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp	2016-10-04 19:02:52.307885029 +0000
 @@ -41,6 +41,9 @@
  #include "Video/DVDVideoCodecAndroidMediaCodec.h"
  #include "platform/android/activity/AndroidFeatures.h"
@@ -43,8 +43,8 @@ diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/DVDFactoryCodec.cpp b/xbmc/cores/Vi
      pCodec = OpenCodec(new CMMALVideo(processInfo), hint, options);
  #endif
 diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt b/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt
---- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt	2016-07-01 06:13:27.000000000 +0000
-+++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt	2016-07-18 16:29:19.874721891 +0000
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt	2016-09-17 15:35:20.000000000 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt	2016-10-04 19:02:52.307885029 +0000
 @@ -53,6 +53,11 @@
    list(APPEND HEADERS MMALFFmpeg.h)
  endif()
@@ -59,7 +59,7 @@ diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/CMakeLists.txt b/xbmc/cores/V
    list(APPEND HEADERS DVDVideoCodecIMX.h)
 diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp
 --- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp	1970-01-01 00:00:00.000000000 +0000
-+++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp	2016-07-18 16:20:21.553847829 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp	2016-10-04 19:02:52.307885029 +0000
 @@ -0,0 +1,585 @@
 +#include "system.h"
 +
@@ -648,7 +648,7 @@ diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.cpp b/xbmc/c
 +}
 diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h
 --- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h	1970-01-01 00:00:00.000000000 +0000
-+++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h	2016-07-18 16:20:24.213753326 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h	2016-10-04 19:02:52.307885029 +0000
 @@ -0,0 +1,64 @@
 +#pragma once
 +
@@ -715,8 +715,8 @@ diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecMFC.h b/xbmc/cor
 +  bool OpenDevices();
 +};
 diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in b/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in
---- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in	2016-07-01 06:13:27.000000000 +0000
-+++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in	2016-07-19 19:19:56.972015876 +0000
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in	2016-09-17 15:35:20.000000000 +0000
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in	2016-10-04 19:02:52.307885029 +0000
 @@ -25,6 +25,9 @@
  SRCS += AMLCodec.cpp
  SRCS += DVDVideoCodecAmlogic.cpp
@@ -728,8 +728,8 @@ diff -Nur a/xbmc/cores/VideoPlayer/DVDCodecs/Video/Makefile.in b/xbmc/cores/Vide
  ifeq (@USE_ANDROID@,1)
  SRCS += DVDVideoCodecAndroidMediaCodec.cpp
 diff -Nur a/xbmc/linux/CMakeLists.txt b/xbmc/linux/CMakeLists.txt
---- a/xbmc/linux/CMakeLists.txt	2016-07-01 06:13:28.000000000 +0000
-+++ b/xbmc/linux/CMakeLists.txt	2016-07-18 16:23:19.063541107 +0000
+--- a/xbmc/linux/CMakeLists.txt	2016-09-17 15:35:20.000000000 +0000
++++ b/xbmc/linux/CMakeLists.txt	2016-10-04 19:02:52.311884882 +0000
 @@ -5,6 +5,7 @@
              FDEventMonitor.cpp
              LinuxResourceCounter.cpp
@@ -748,7 +748,7 @@ diff -Nur a/xbmc/linux/CMakeLists.txt b/xbmc/linux/CMakeLists.txt
              PosixMountProvider.h
 diff -Nur a/xbmc/linux/LinuxV4l2Sink.cpp b/xbmc/linux/LinuxV4l2Sink.cpp
 --- a/xbmc/linux/LinuxV4l2Sink.cpp	1970-01-01 00:00:00.000000000 +0000
-+++ b/xbmc/linux/LinuxV4l2Sink.cpp	2016-07-18 16:21:25.051591825 +0000
++++ b/xbmc/linux/LinuxV4l2Sink.cpp	2016-10-04 19:02:52.311884882 +0000
 @@ -0,0 +1,311 @@
 +#include "system.h"
 +
@@ -1063,7 +1063,7 @@ diff -Nur a/xbmc/linux/LinuxV4l2Sink.cpp b/xbmc/linux/LinuxV4l2Sink.cpp
 +}
 diff -Nur a/xbmc/linux/LinuxV4l2Sink.h b/xbmc/linux/LinuxV4l2Sink.h
 --- a/xbmc/linux/LinuxV4l2Sink.h	1970-01-01 00:00:00.000000000 +0000
-+++ b/xbmc/linux/LinuxV4l2Sink.h	2016-07-18 16:21:27.911490215 +0000
++++ b/xbmc/linux/LinuxV4l2Sink.h	2016-10-04 19:02:52.311884882 +0000
 @@ -0,0 +1,71 @@
 +#pragma once
 +
@@ -1137,8 +1137,8 @@ diff -Nur a/xbmc/linux/LinuxV4l2Sink.h b/xbmc/linux/LinuxV4l2Sink.h
 +  bool DequeueBuffer(v4l2_buffer *buffer);
 +};
 diff -Nur a/xbmc/linux/Makefile.in b/xbmc/linux/Makefile.in
---- a/xbmc/linux/Makefile.in	2016-07-01 06:13:28.000000000 +0000
-+++ b/xbmc/linux/Makefile.in	2016-07-19 19:18:11.855763249 +0000
+--- a/xbmc/linux/Makefile.in	2016-09-17 15:35:20.000000000 +0000
++++ b/xbmc/linux/Makefile.in	2016-10-04 19:02:52.311884882 +0000
 @@ -7,6 +7,7 @@
  SRCS += FDEventMonitor.cpp
  SRCS += LinuxResourceCounter.cpp
@@ -1147,3 +1147,303 @@ diff -Nur a/xbmc/linux/Makefile.in b/xbmc/linux/Makefile.in
  SRCS += PosixMountProvider.cpp
  SRCS += XFileUtils.cpp
  SRCS += XHandle.cpp
+diff -Nur a/xbmc/windowing/egl/EGLNativeTypeFbdev.cpp b/xbmc/windowing/egl/EGLNativeTypeFbdev.cpp
+--- a/xbmc/windowing/egl/EGLNativeTypeFbdev.cpp	1970-01-01 00:00:00.000000000 +0000
++++ b/xbmc/windowing/egl/EGLNativeTypeFbdev.cpp	2016-10-04 19:03:43.849995620 +0000
+@@ -0,0 +1,183 @@
++/*
++ *      Copyright (C) 2011-2012 Team XBMC
++ *      http://www.xbmc.org
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with XBMC; see the file COPYING.  If not, see
++ *  <http://www.gnu.org/licenses/>.
++ *
++ */
++#include <EGL/egl.h>
++#include "EGLNativeTypeFbdev.h"
++#include "utils/log.h"
++#include <stdlib.h>
++#include <linux/fb.h>
++#include <sys/ioctl.h>
++#include "utils/StringUtils.h"
++#include "guilib/gui3d.h"
++#include <linux/media.h>
++
++#include <unistd.h>
++
++#include "utils/StringUtils.h"
++
++#ifdef CLASSNAME
++#undef CLASSNAME
++#endif
++#define CLASSNAME "CEGLNativeTypeFbdev"
++
++CEGLNativeTypeFbdev::CEGLNativeTypeFbdev()
++{
++  m_iFBHandle = -1;
++  m_nativeWindow  = NULL;
++  m_nativeDisplay = NULL;
++}
++
++CEGLNativeTypeFbdev::~CEGLNativeTypeFbdev()
++{
++}
++
++bool CEGLNativeTypeFbdev::CheckCompatibility()
++{
++  m_iFBHandle = open("/dev/fb0", O_RDWR, 0);
++  if(m_iFBHandle < 0)
++    return false;
++
++  vinfo = new fb_var_screeninfo();
++  if(ioctl(m_iFBHandle, FBIOGET_VSCREENINFO, vinfo) == -1)
++    return false;
++
++  CLog::Log(LOGNOTICE, "%s::%s FBDev device: %d, info.xres %d info.yres %d info.upper_margin %d info.lower_margin %d info.pixclock %d",
++    CLASSNAME, __func__, m_iFBHandle, vinfo->xres, vinfo->yres, vinfo->upper_margin, vinfo->lower_margin, vinfo->pixclock);
++
++  finfo = new fb_fix_screeninfo();
++  if(ioctl(m_iFBHandle, FBIOGET_FSCREENINFO, finfo) == -1)
++    return false;
++
++  return true;
++}
++
++void CEGLNativeTypeFbdev::Initialize()
++{
++  return;
++}
++void CEGLNativeTypeFbdev::Destroy()
++{
++  return;
++}
++
++bool CEGLNativeTypeFbdev::CreateNativeDisplay()
++{
++  m_nativeDisplay = EGL_DEFAULT_DISPLAY;
++  return true;
++}
++
++bool CEGLNativeTypeFbdev::CreateNativeWindow()
++{
++  fbdev_window *nativeWindow = new fbdev_window;
++  if (!nativeWindow)
++    return false;
++
++  nativeWindow->width = vinfo->xres;
++  nativeWindow->height = vinfo->yres;
++  m_nativeWindow = nativeWindow;
++  return true;
++}
++
++bool CEGLNativeTypeFbdev::GetNativeDisplay(XBNativeDisplayType **nativeDisplay) const
++{
++  if (!nativeDisplay)
++    return false;
++  *nativeDisplay = (XBNativeDisplayType*) &m_nativeDisplay;
++  return true;
++}
++
++bool CEGLNativeTypeFbdev::GetNativeWindow(XBNativeWindowType **nativeWindow) const
++{
++  if (!nativeWindow)
++    return false;
++  *nativeWindow = (XBNativeWindowType*) &m_nativeWindow;
++  return true;
++}
++
++bool CEGLNativeTypeFbdev::DestroyNativeDisplay()
++{
++  return true;
++}
++
++bool CEGLNativeTypeFbdev::DestroyNativeWindow()
++{
++  free(m_nativeWindow);
++  return true;
++}
++
++bool CEGLNativeTypeFbdev::GetNativeResolution(RESOLUTION_INFO *res) const
++{
++  res->iWidth = vinfo->xres;
++  res->iHeight = vinfo->yres;
++  res->fRefreshRate = 60;
++  res->dwFlags = D3DPRESENTFLAG_PROGRESSIVE;
++  res->iScreen = 0;
++  res->bFullScreen = true;
++  res->iSubtitles = (int)(0.965 * res->iHeight);
++  res->fPixelRatio = 1.0f;
++  res->iScreenWidth = res->iWidth;
++  res->iScreenHeight = res->iHeight;
++  res->strMode = StringUtils::Format("%dx%d @ %.2f%s - Full Screen", res->iScreenWidth, res->iScreenHeight, res->fRefreshRate, res->dwFlags & D3DPRESENTFLAG_INTERLACED ? "i" : "");
++
++  CLog::Log(LOGNOTICE, "Current resolution: %s", res->strMode.c_str());
++  return true;
++}
++
++bool CEGLNativeTypeFbdev::SetNativeResolution(const RESOLUTION_INFO &res)
++{
++
++  vinfo->activate = FB_ACTIVATE_NOW;
++
++  if (ioctl(m_iFBHandle, FBIOPUT_VSCREENINFO, vinfo) == -1)
++  {
++    CLog::Log(LOGERROR, "%s::%s - FBIOPUT_VSCREENINFO error", CLASSNAME, __func__);
++    return false;
++  }
++  if (ioctl(m_iFBHandle, FBIOPAN_DISPLAY, vinfo) == -1)
++  {
++    CLog::Log(LOGERROR, "%s::%s - FBIOPAN_DISPLAY error", CLASSNAME, __func__);
++    return false;
++  }
++
++  CLog::Log(LOGNOTICE, "%s::%s width %d height %d refresh %f", CLASSNAME, __func__, res.iScreenWidth, res.iScreenHeight, res.fRefreshRate);
++
++  return true;
++}
++
++bool CEGLNativeTypeFbdev::ProbeResolutions(std::vector<RESOLUTION_INFO> &resolutions)
++{
++  RESOLUTION_INFO res;
++  if (GetNativeResolution(&res) && res.iWidth > 1 && res.iHeight > 1)
++  {
++    resolutions.push_back(res);
++    return true;
++  }
++  return false;
++}
++
++bool CEGLNativeTypeFbdev::GetPreferredResolution(RESOLUTION_INFO *res) const
++{
++    GetNativeResolution(res);
++    return true;
++}
++
++bool CEGLNativeTypeFbdev::ShowWindow(bool show)
++{
++  return false;
++}
+diff -Nur a/xbmc/windowing/egl/EGLNativeTypeFbdev.h b/xbmc/windowing/egl/EGLNativeTypeFbdev.h
+--- a/xbmc/windowing/egl/EGLNativeTypeFbdev.h	1970-01-01 00:00:00.000000000 +0000
++++ b/xbmc/windowing/egl/EGLNativeTypeFbdev.h	2016-10-04 19:03:46.025915857 +0000
+@@ -0,0 +1,68 @@
++#pragma once
++
++/*
++ *      Copyright (C) 2011-2012 Team XBMC
++ *      http://www.xbmc.org
++ *
++ *  This Program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2, or (at your option)
++ *  any later version.
++ *
++ *  This Program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with XBMC; see the file COPYING.  If not, see
++ *  <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#include "EGLNativeType.h"
++#include <linux/fb.h>
++#include <list>
++
++#ifndef _FBDEV_WINDOW_H_
++// Define it right here, since some platforms doesn't has fbdev_window.h at all.
++// This will not make it fail on these platforms badly, since it will fail softly anyway on some other init steps.
++#define _FBDEV_WINDOW_H_
++typedef struct fbdev_window
++{
++  unsigned short width;
++  unsigned short height;
++} fbdev_window;
++#endif
++
++class CEGLNativeTypeFbdev : public CEGLNativeType
++{
++public:
++  CEGLNativeTypeFbdev();
++  virtual ~CEGLNativeTypeFbdev();
++  virtual std::string GetNativeName() const { return "FBDev"; };
++  virtual bool  CheckCompatibility();
++  virtual void  Initialize();
++  virtual void  Destroy();
++  virtual int   GetQuirks() { return EGL_QUIRK_NONE; };
++
++  virtual bool  CreateNativeDisplay();
++  virtual bool  CreateNativeWindow();
++  virtual bool  GetNativeDisplay(XBNativeDisplayType **nativeDisplay) const;
++  virtual bool  GetNativeWindow(XBNativeWindowType **nativeWindow) const;
++
++  virtual bool  DestroyNativeWindow();
++  virtual bool  DestroyNativeDisplay();
++
++  virtual bool  GetNativeResolution(RESOLUTION_INFO *res) const;
++  virtual bool  SetNativeResolution(const RESOLUTION_INFO &res);
++  virtual bool  ProbeResolutions(std::vector<RESOLUTION_INFO> &resolutions);
++  virtual bool  GetPreferredResolution(RESOLUTION_INFO *res) const;
++
++  virtual bool  ShowWindow(bool show);
++
++protected:
++  int m_iFBHandle;
++  fb_var_screeninfo *vinfo;
++  fb_fix_screeninfo *finfo;
++};
+diff -Nur a/xbmc/windowing/egl/EGLWrapper.cpp b/xbmc/windowing/egl/EGLWrapper.cpp
+--- a/xbmc/windowing/egl/EGLWrapper.cpp	2016-09-17 15:35:21.000000000 +0000
++++ b/xbmc/windowing/egl/EGLWrapper.cpp	2016-10-04 19:04:43.595846610 +0000
+@@ -24,9 +24,9 @@
+ #include <assert.h>
+ #if defined(TARGET_ANDROID)
+   #include "EGLNativeTypeAndroid.h"
+-#if defined(HAS_LIBAMCODEC)
+-  #include "EGLNativeTypeAmlAndroid.h"
+-#endif
++  #if defined(HAS_LIBAMCODEC)
++    #include "EGLNativeTypeAmlAndroid.h"
++  #endif
+ #endif
+ #if defined(TARGET_RASPBERRY_PI)
+   #include "EGLNativeTypeRaspberryPI.h"
+@@ -35,8 +35,9 @@
+   #include "EGLNativeTypeIMX.h"
+ #endif
+ #if defined(TARGET_LINUX) && defined(HAS_LIBAMCODEC)
+-#include "EGLNativeTypeAmlogic.h"
++  #include "EGLNativeTypeAmlogic.h"
+ #endif
++#include "EGLNativeTypeFbdev.h"
+ #include "EGLWrapper.h"
+ 
+ #define CheckError() m_result = eglGetError(); if(m_result != EGL_SUCCESS) CLog::Log(LOGERROR, "EGL error in %s: %x",__FUNCTION__, m_result);
+@@ -101,6 +102,8 @@
+       (nativeGuess = CreateEGLNativeType<CEGLNativeTypeIMX>(implementation))
+ #elif defined(TARGET_LINUX) && defined(HAS_LIBAMCODEC)
+       (nativeGuess = CreateEGLNativeType<CEGLNativeTypeAmlogic>(implementation))
++#else
++      (nativeGuess = CreateEGLNativeType<CEGLNativeTypeFbdev>(implementation))
+ #endif
+       )
+   {
+@@ -422,4 +425,3 @@
+   return eglSurfaceAttrib(display, surface, attribute, value);
+ }
+ #endif
+-
