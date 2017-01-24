@@ -29,6 +29,10 @@ PKG_SECTION="tools"
 PKG_SHORTDESC="Device Tree Compiler"
 PKG_LONGDESC="dtc: Device Tree Compiler"
 
+make_host() {
+  make WARNINGS="" CFLAGS="$HOST_CFLAGS -fPIC"
+}
+
 makeinstall_host() {
   make install PREFIX=$ROOT/$TOOLCHAIN
 }
