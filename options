@@ -151,9 +151,6 @@
     EXTRA_DEPS="mkimage"
     EXTRA_DEPS_PKG="u-boot-tools"
 
-  # kernel image name
-    KERNEL_NAME="kernel.img"
-
   # Distribution Specific source location : Additional
     ODROID_MIRROR="http://freeweb.mine.nu/zalaare"
 
