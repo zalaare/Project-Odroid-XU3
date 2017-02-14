@@ -16,8 +16,9 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+PKG_MK="$ROOT/packages/graphics/mesa/package.mk"
 PKG_NAME="mesa-headers"
-PKG_VERSION="11.0.0"
+PKG_VERSION="$(grep ^PKG_VERSION $PKG_MK | awk -F '=' '{print $2}' | sed 's/["]//g' )"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
@@ -45,5 +46,20 @@ makeinstall_host() {
   mkdir -p $SYSROOT_PREFIX/usr/include
     cp -PvR $ROOT/$PKG_BUILD/include/EGL $SYSROOT_PREFIX/usr/include
     cp -PvR $ROOT/$PKG_BUILD/include/GLES2 $SYSROOT_PREFIX/usr/include
-    cp -Pvr $ROOT/$PKG_BUILD/include/KHR $SYSROOT_PREFIX/usr/include
+    cp -PvR $ROOT/$PKG_BUILD/include/KHR $SYSROOT_PREFIX/usr/include
+  mkdir -p $SYSROOT_PREFIX/usr/lib/pkgconfig
+    cat > $SYSROOT_PREFIX/usr/lib/pkgconfig/egl.pc <<\ \ \ \ EoF
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/
+includedir=${prefix}/include
+
+Name: EGL
+Description: EGL
+Version: @PKG_VERSION@
+Requires:
+Libs: -L${libdir} -lEGL
+Cflags: -I${includedir}/EGL
+    EoF
+    sed -i "s/@PKG_VERSION@/$PKG_VERSION/" $SYSROOT_PREFIX/usr/lib/pkgconfig/egl.pc
 }
