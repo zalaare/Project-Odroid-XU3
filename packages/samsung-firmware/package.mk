@@ -1,13 +1,13 @@
 ################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#      This file is part of LibreELEC - http://www.libreelec.tv
+#      Copyright (C) 2012-
 #
-#  OpenELEC is free software: you can redistribute it and/or modify
+#  LibreELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 2 of the License, or
 #  (at your option) any later version.
 #
-#  OpenELEC is distributed in the hope that it will be useful,
+#  LibreELEC is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
@@ -37,9 +37,9 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/lib/firmware/s5p-mfc
-  cp -R * $INSTALL/lib/firmware
+  mkdir -p $INSTALL/usr/lib/firmware/s5p-mfc
+  cp -R * $INSTALL/usr/lib/firmware
   for fw in s5p-* ; do
-    ln -sf ../${fw} $INSTALL/lib/firmware/s5p-mfc/${fw}
+    ln -sf ../${fw} $INSTALL/usr/lib/firmware/s5p-mfc/${fw}
   done
 }
