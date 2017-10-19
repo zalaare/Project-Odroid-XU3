@@ -28,14 +28,16 @@ PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.mesa3d.org/"
-PKG_URL="ftp://ftp.freedesktop.org/pub/mesa/$LOC/mesa-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_URL=$(grep ^PKG_URL $PKG_MK | awk -F '=' '{print $2}' | sed 's/["]//g' )
+  # convert string with literal $PKG_NAME-$PKG_VERSION into expanded variables
+  PKG_URL="${PKG_URL/\$PKG_NAME/mesa}"
+  PKG_URL="${PKG_URL/\$PKG_VERSION/$PKG_VERSION}"
+PKG_DEPENDS_TARGET="$(grep ^PKG_DEPENDS_TARGET $PKG_MK | awk -F '=' '{print $2}' | sed 's/["]//g' )"
 PKG_PRIORITY="optional"
 PKG_SECTION="devel"
 PKG_SHORTDESC="Mesa headers for Mali"
 PKG_LONGDESC="Mesa headers for Mali"
 PKG_SOURCE_DIR="mesa-$PKG_VERSION"
-# PKG_SOURCE_NAME="mesa-$PKG_VERSION.tar.xz"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
@@ -49,9 +51,9 @@ make_host() {
 
 makeinstall_host() {
   mkdir -p $SYSROOT_PREFIX/usr/include
-    cp -PvR $ROOT/$PKG_BUILD/include/EGL $SYSROOT_PREFIX/usr/include
-    cp -PvR $ROOT/$PKG_BUILD/include/GLES2 $SYSROOT_PREFIX/usr/include
-    cp -PvR $ROOT/$PKG_BUILD/include/KHR $SYSROOT_PREFIX/usr/include
+    cp -PvR $PKG_BUILD/include/EGL $SYSROOT_PREFIX/usr/include
+    cp -PvR $PKG_BUILD/include/GLES2 $SYSROOT_PREFIX/usr/include
+    cp -PvR $PKG_BUILD/include/KHR $SYSROOT_PREFIX/usr/include
   mkdir -p $SYSROOT_PREFIX/usr/lib/pkgconfig
     cat > $SYSROOT_PREFIX/usr/lib/pkgconfig/egl.pc <<\ \ \ \ EoF
 prefix=/usr
