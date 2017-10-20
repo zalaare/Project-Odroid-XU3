@@ -242,14 +242,13 @@ PKG_CMAKE_OPTS_TARGET="-DNATIVEPREFIX=$TOOLCHAIN \
                        -DENABLE_CCACHE=ON \
                        -DENABLE_LIRC=ON \
                        -DENABLE_EVENTCLIENTS=ON \
-                       -DENABLE_LDGOLD=OFF \
+                       -DENABLE_LDGOLD=ON \
                        $KODI_ARCH \
                        $KODI_OPENGL \
                        $KODI_OPENGLES \
                        $KODI_OPENMAX \
                        $KODI_VDPAU \
                        $KODI_VAAPI \
-                       $KODI_JOYSTICK \
                        $KODI_CEC \
                        $KODI_XORG \
                        $KODI_SAMBA \
@@ -269,7 +268,6 @@ PKG_CMAKE_OPTS_TARGET="-DNATIVEPREFIX=$TOOLCHAIN \
 pre_configure_target() {
 # kodi should never be built with lto
   strip_lto
-  strip_gold
 
   export LIBS="$LIBS -lz -lterminfo"
 }
