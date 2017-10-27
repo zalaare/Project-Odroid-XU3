@@ -19,11 +19,16 @@
 PKG_MK="$ROOT/packages/graphics/mesa/package.mk"
 PKG_NAME="mesa-headers"
 PKG_VERSION="$(grep ^PKG_VERSION $PKG_MK | awk -F '=' '{print $2}' | sed 's/["]//g' )"
+
+case $PKG_VERSION in
+  13.*) LOC="older-versions/13.x/$PKG_VERSION" ;;
+esac
+
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.mesa3d.org/"
-PKG_URL="ftp://freedesktop.org/pub/mesa/$PKG_VERSION/mesa-$PKG_VERSION.tar.xz"
+PKG_URL="ftp://ftp.freedesktop.org/pub/mesa/$LOC/mesa-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="devel"
