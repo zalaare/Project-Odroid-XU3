@@ -36,11 +36,6 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 post_patch() {
-  # copy old compiler-gcc5 over for gcc6 and gcc7
-  cp $PKG_BUILD/include/linux/compiler-gcc5.h $PKG_BUILD/include/linux/compiler-gcc6.h
-  cp $PKG_BUILD/include/linux/compiler-gcc6.h $PKG_BUILD/include/linux/compiler-gcc7.h
-
-
   if [ -n "$DEVICE" -a -f $PROJECT_DIR/$PROJECT/devices/$DEVICE/$PKG_NAME/$PKG_VERSION/$PKG_NAME.$TARGET_ARCH.conf ]; then
     KERNEL_CFG_FILE=$PROJECT_DIR/$PROJECT/devices/$DEVICE/$PKG_NAME/$PKG_VERSION/$PKG_NAME.$TARGET_ARCH.conf
   elif [ -n "$DEVICE" -a -f $PROJECT_DIR/$PROJECT/devices/$DEVICE/$PKG_NAME/$PKG_NAME.$TARGET_ARCH.conf ]; then
