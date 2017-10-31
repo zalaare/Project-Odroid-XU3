@@ -35,29 +35,34 @@ PKG_LONGDESC="This package contains a precompiled Linux kernel image and the mod
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mkbootimg:host"
-fi
-
 post_patch() {
-  if [ -f $PROJECT_DIR/$PROJECT/$PKG_NAME/$PKG_NAME.$TARGET_ARCH.conf ]; then
+  # copy old compiler-gcc5 over for gcc6 and gcc7
+  cp $PKG_BUILD/include/linux/compiler-gcc5.h $PKG_BUILD/include/linux/compiler-gcc6.h
+  cp $PKG_BUILD/include/linux/compiler-gcc6.h $PKG_BUILD/include/linux/compiler-gcc7.h
+
+
+  if [ -n "$DEVICE" -a -f $PROJECT_DIR/$PROJECT/devices/$DEVICE/$PKG_NAME/$PKG_VERSION/$PKG_NAME.$TARGET_ARCH.conf ]; then
+    KERNEL_CFG_FILE=$PROJECT_DIR/$PROJECT/devices/$DEVICE/$PKG_NAME/$PKG_VERSION/$PKG_NAME.$TARGET_ARCH.conf
+  elif [ -n "$DEVICE" -a -f $PROJECT_DIR/$PROJECT/devices/$DEVICE/$PKG_NAME/$PKG_NAME.$TARGET_ARCH.conf ]; then
+    KERNEL_CFG_FILE=$PROJECT_DIR/$PROJECT/devices/$DEVICE/$PKG_NAME/$PKG_NAME.$TARGET_ARCH.conf
+  elif [ -f $PROJECT_DIR/$PROJECT/$PKG_NAME/$PKG_VERSION/$PKG_NAME.$TARGET_ARCH.conf ]; then
+    KERNEL_CFG_FILE=$PROJECT_DIR/$PROJECT/$PKG_NAME/$PKG_VERSION/$PKG_NAME.$TARGET_ARCH.conf
+  elif [ -f $PROJECT_DIR/$PROJECT/$PKG_NAME/$PKG_NAME.$TARGET_ARCH.conf ]; then
     KERNEL_CFG_FILE=$PROJECT_DIR/$PROJECT/$PKG_NAME/$PKG_NAME.$TARGET_ARCH.conf
-  elif [ -f $ROOT/.libreelec/projects/$PROJECT/$PKG_NAME/$PKG_NAME.$TARGET_ARCH.conf ]; then
-    KERNEL_CFG_FILE=$ROOT/.libreelec/projects/$PROJECT/$PKG_NAME/$PKG_NAME.$TARGET_ARCH.conf
+  elif [ -f $PKG_DIR/config/$PKG_VERSION/$PKG_NAME.$TARGET_ARCH.conf ]; then
+    KERNEL_CFG_FILE=$PKG_DIR/config/$PKG_VERSION/$PKG_NAME.$TARGET_ARCH.conf
   else
     KERNEL_CFG_FILE=$PKG_DIR/config/$PKG_NAME.$TARGET_ARCH.conf
   fi
 
-  sed -i -e "s|^HOSTCC[[:space:]]*=.*$|HOSTCC = $HOST_CC|" \
-         -e "s|^HOSTCXX[[:space:]]*=.*$|HOSTCXX = $HOST_CXX|" \
+  sed -i -e "s|^HOSTCC[[:space:]]*=.*$|HOSTCC = $TOOLCHAIN/bin/host-gcc|" \
+         -e "s|^HOSTCXX[[:space:]]*=.*$|HOSTCXX = $TOOLCHAIN/bin/host-g++|" \
          -e "s|^ARCH[[:space:]]*?=.*$|ARCH = $TARGET_KERNEL_ARCH|" \
          -e "s|^CROSS_COMPILE[[:space:]]*?=.*$|CROSS_COMPILE = $TARGET_PREFIX|" \
          $PKG_BUILD/Makefile
 
   cp $KERNEL_CFG_FILE $PKG_BUILD/.config
-  if [ ! "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
-    sed -i -e "s|^CONFIG_INITRAMFS_SOURCE=.*$|CONFIG_INITRAMFS_SOURCE=\"$ROOT/$BUILD/image/initramfs.cpio\"|" $PKG_BUILD/.config
-  fi
+  sed -i -e "s|^CONFIG_INITRAMFS_SOURCE=.*$|CONFIG_INITRAMFS_SOURCE=\"$BUILD/image/initramfs.cpio\"|" $PKG_BUILD/.config
 
   # set default hostname based on $DISTRONAME
   sed -i -e "s|@DISTRONAME@|$DISTRONAME|g" $PKG_BUILD/.config
@@ -85,11 +90,6 @@ post_patch() {
     sed -i -e "s|^CONFIG_ISCSI_IBFT_FIND=.*$|# CONFIG_ISCSI_IBFT_FIND is not set|" $PKG_BUILD/.config
     sed -i -e "s|^CONFIG_ISCSI_IBFT=.*$|# CONFIG_ISCSI_IBFT is not set|" $PKG_BUILD/.config
   fi
-
-  # copy some extra firmware to linux tree
-  cp -R $PKG_DIR/firmware/* $PKG_BUILD/firmware || :
-
-  make -C $PKG_BUILD oldconfig
 }
 
 make_host() {
@@ -101,8 +101,10 @@ makeinstall_host() {
 }
 
 pre_make_target() {
+  make oldconfig
+
   # regdb
-  cp $(get_build_dir wireless-regdb)/db.txt $ROOT/$PKG_BUILD/net/wireless/db.txt
+  cp $(get_build_dir wireless-regdb)/db.txt $PKG_BUILD/net/wireless/db.txt
 
   if [ "$BOOTLOADER" = "u-boot" ]; then
     ( cd $ROOT
@@ -113,12 +115,12 @@ pre_make_target() {
 
 make_target() {
   LDFLAGS="" make modules
-  LDFLAGS="" make INSTALL_MOD_PATH=$INSTALL/usr DEPMOD="$ROOT/$TOOLCHAIN/bin/depmod" modules_install
+  LDFLAGS="" make INSTALL_MOD_PATH=$INSTALL/usr DEPMOD="$TOOLCHAIN/bin/depmod" modules_install
   rm -f $INSTALL/usr/lib/modules/*/build
   rm -f $INSTALL/usr/lib/modules/*/source
 
   ( cd $ROOT
-    rm -rf $ROOT/$BUILD/initramfs
+    rm -rf $BUILD/initramfs
     $SCRIPTS/install initramfs
   )
 
@@ -129,12 +131,6 @@ make_target() {
   fi
 
   LDFLAGS="" make $KERNEL_TARGET $KERNEL_MAKE_EXTRACMD
-
-  if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
-    LDFLAGS="" mkbootimg --kernel arch/$TARGET_KERNEL_ARCH/boot/$KERNEL_TARGET --ramdisk $ROOT/$BUILD/image/initramfs.cpio \
-      --second "$ANDROID_BOOTIMG_SECOND" --output arch/$TARGET_KERNEL_ARCH/boot/boot.img
-    mv -f arch/$TARGET_KERNEL_ARCH/boot/boot.img arch/$TARGET_KERNEL_ARCH/boot/$KERNEL_TARGET
-  fi
 }
 
 makeinstall_target() {

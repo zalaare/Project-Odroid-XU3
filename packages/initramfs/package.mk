@@ -43,11 +43,14 @@ if [ "$INITRAMFS_PARTED_SUPPORT" = yes ]; then
 fi
 
 post_install() {
-  sed -i "s|tty1|ttySAC2|g" $ROOT/$BUILD/initramfs/init
-  chmod 0755 $ROOT/$BUILD/initramfs/init
+  sed -i "s|tty1|ttySAC2|g" $BUILD/initramfs/init
+  chmod 0755 $BUILD/initramfs/init
 
-  cd $ROOT/$BUILD/initramfs
-    mkdir -p $ROOT/$BUILD/image
-    find . | cpio -H newc -ov -R 0:0 > $ROOT/$BUILD/image/initramfs.cpio
+  cd $BUILD/initramfs
+    ln -sf /usr/lib $BUILD/initramfs/lib
+    ln -sf /usr/bin $BUILD/initramfs/bin
+    ln -sf /usr/sbin $BUILD/initramfs/sbin
+    mkdir -p $BUILD/image
+    find . | cpio -H newc -ov -R 0:0 > $BUILD/image/initramfs.cpio
   cd -
 }
