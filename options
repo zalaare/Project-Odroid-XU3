@@ -42,7 +42,7 @@
     UBOOT_VERSION="default"
 
   # Configuration for u-boot
-    UBOOT_CONFIG="odroid-xu3_defconfig"
+    UBOOT_CONFIG="odroid-xu4_defconfig"
 
   # Target Configfile for u-boot
     UBOOT_CONFIGFILE="boot.ini"
@@ -152,7 +152,7 @@
     EXTRA_DEPS_PKG="u-boot-tools"
 
   # Distribution Specific source location : Additional
-    ODROID_MIRROR="http://freeweb.mine.nu/zalaare"
+    ODROID_MIRROR="http://zalaare.freeddns.org/Odroid"
 
   # set the addon server
     ADDON_SERVER_URL="https://raw.github.com/zalaare/OpenELEC-Odroid-Addons"

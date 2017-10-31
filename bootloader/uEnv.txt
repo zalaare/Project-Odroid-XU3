@@ -1,9 +1,8 @@
 #------------------------------------------------------------------------------------------------------
 #
-# boot.ini identification
+# uEnv.txt
 #
 #------------------------------------------------------------------------------------------------------
-ODROIDXU-UBOOT-CONFIG
 
 # U-Boot Parameters
 setenv initrd_high "0xffffffff"
@@ -40,12 +39,12 @@ setenv console "console=tty0 console=ttySAC2,115200n8"
 
 #------------------------------------------------------------------------------------------------------
 #
-# OpenELEC variables
+# LibreELEC variables
 #
-# Setup the OpenELEC options
+# Setup the LibreELEC options
 #   valid values are: progress ssh debugging quiet break verbose
 #------------------------------------------------------------------------------------------------------
-setenv openelec "quiet ssh"
+setenv libreelec "quiet ssh"
 
 #------------------------------------------------------------------------------------------------------
 #
@@ -68,7 +67,7 @@ setenv bootcmd "${kernel}; ${dtb}; bootz 40008000 - 44000000"
 # Kernel boot
 #
 #------------------------------------------------------------------------------------------------------
-setenv bootargs "${console} ${bootrootfs} ${openelec} smsc95xx.macaddr=${macaddr}"
+setenv bootargs "${console} ${bootrootfs} ${libreelec} smsc95xx.macaddr=${macaddr}"
 
 # Boot the board
 boot

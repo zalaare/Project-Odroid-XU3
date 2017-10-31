@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="mali"
-PKG_VERSION="r6p0-02rel0"
+PKG_VERSION="r12p004rel0"
 PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE="nonfree"
@@ -34,7 +34,8 @@ PKG_AUTORECONF="no"
 if [ "$DISPLAYSERVER" = "x11" ]; then
   PKG_VERSION="${PKG_VERSION}"
   PKG_SOURCE_DIR="x11"
-  PKG_URL="http://malideveloper.arm.com/downloads/drivers/binary/$PKG_VERSION/mali-t62x_${PKG_VERSION}_linux_1+x11.tar.gz"
+  PKG_URL="https://developer.arm.com/-/media/Files/downloads/mali-drivers/user-space/odroid-xu3/malit62x${PKG_VERSION}linux1x11.tar.gz"
+  #PKG_URL="http://malideveloper.arm.com/downloads/drivers/binary/$PKG_VERSION/mali-t62x_${PKG_VERSION}_linux_1+x11.tar.gz"
   PKG_SOURCE_NAME="$(basename ${PKG_URL})"
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libXfixes libXdmcp libXrender libxcb libXcomposite"
   LINKS=( "ln -sfn libmali.so libEGL.so" "ln -sfn libmali.so libGLESv2.so" )
@@ -42,7 +43,8 @@ if [ "$DISPLAYSERVER" = "x11" ]; then
 else
   PKG_VERSION="${PKG_VERSION}"
   PKG_SOURCE_DIR="fbdev"
-  PKG_URL="http://malideveloper.arm.com/downloads/drivers/binary/$PKG_VERSION/mali-t62x_${PKG_VERSION}_linux_1+fbdev.tar.gz"
+  PKG_URL="https://developer.arm.com/-/media/Files/downloads/mali-drivers/user-space/odroid-xu3/malit62x${PKG_VERSION}linux1fbdev.tar.gz"
+  #PKG_URL="http://malideveloper.arm.com/downloads/drivers/binary/$PKG_VERSION/mali-t62x_${PKG_VERSION}_linux_1+fbdev.tar.gz"
   PKG_SOURCE_NAME="$(basename ${PKG_URL})"
   LINKS=( "ln -sfn libmali.so libEGL.so" "ln -sfn libmali.so libGLESv2.so" )
   DESTROY=( "rm -f libGLESv1_CM.so" "rm -f libOpenCL.so" )
